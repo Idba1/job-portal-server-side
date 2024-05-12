@@ -67,7 +67,13 @@ async function run() {
             res.send(result)
         })
 
-
+        // delete
+        app.delete('/job/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: new ObjectId(id) }
+            const result = await alljobCollection.deleteOne(query)
+            res.send(result)
+        })
 
         // Save Apply
         app.post('/apply', async (req, res) => {

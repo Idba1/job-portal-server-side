@@ -50,7 +50,14 @@ async function run() {
             res.send(result)
         })
 
-        
+        // get all jobs posted by a specific user
+        app.get('/jobs/:email', async (req, res) => {
+            const email = req.params.email
+            const query = { 'loggedInUserInfo.email': email }
+            const result = await alljobCollection.find(query).toArray()
+            res.send(result)
+        })
+
 
         // Get a single job data from db using job id
         app.get('/job/:id', async (req, res) => {
@@ -61,7 +68,7 @@ async function run() {
         })
 
 
-         
+
         // Save Apply
         app.post('/apply', async (req, res) => {
             const applyData = req.body

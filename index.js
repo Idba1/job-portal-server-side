@@ -34,15 +34,23 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         const alljobCollection = client.db('jobnest').collection('alljob')
         const applyCollection = client.db('jobnest').collection('apply')
-        const addjobCollection = client.db('jobnest').collection('add-job')
 
 
-        // Get alljob data from mongo
+
+        // Save job
+        app.post('/alljob', async (req, res) => {
+            const jobData = req.body
+            const result = await alljobCollection.insertOne(jobData)
+            res.send(result)
+        })
+
+        // Get job data from mongo
         app.get('/alljob', async (req, res) => {
             const result = await alljobCollection.find().toArray()
             res.send(result)
         })
 
+        
 
         // Get a single job data from db using job id
         app.get('/job/:id', async (req, res) => {
@@ -53,6 +61,7 @@ async function run() {
         })
 
 
+         
         // Save Apply
         app.post('/apply', async (req, res) => {
             const applyData = req.body
@@ -64,19 +73,6 @@ async function run() {
         // Get allapply data from mongo
         app.get('/apply', async (req, res) => {
             const result = await applyCollection.find().toArray()
-            res.send(result)
-        })
-
-        // Save job
-        app.post('/add-job', async (req, res) => {
-            const jobData = req.body
-            const result = await addjobCollection.insertOne(jobData)
-            res.send(result)
-        })
-
-        // Get job data from mongo
-        app.get('/add-job', async (req, res) => {
-            const result = await addjobCollection.find().toArray()
             res.send(result)
         })
 

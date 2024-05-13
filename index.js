@@ -104,6 +104,16 @@ async function run() {
             res.send(result)
         })
 
+
+        // get all apply by a specific user
+        app.get('/apply/:email', async (req, res) => {
+            const email = req.params.email
+            const query = { 'email': email }
+            const result = await applyCollection.find(query).toArray()
+            res.send(result)
+        })
+
+
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");

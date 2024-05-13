@@ -10,7 +10,8 @@ const app = express()
 const corsOptions = {
     origin: [
         'http://localhost:5173',
-        'http://localhost:5174', ,
+        'http://localhost:5174',
+        'https://jobnest100.netlify.app',
     ],
     credentials: true,
     optionSuccessStatus: 200,
@@ -34,6 +35,7 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         const alljobCollection = client.db('jobnest').collection('alljob')
         const applyCollection = client.db('jobnest').collection('apply')
+        const careerBlogCollection = client.db('jobnest').collection('blog')
 
 
 
@@ -113,6 +115,11 @@ async function run() {
             res.send(result)
         })
 
+        // Get career blog
+        app.get('/career-blog', async (req, res) => {
+            const result = await careerBlogCollection.find().toArray()
+            res.send(result)
+        })
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });

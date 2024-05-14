@@ -92,13 +92,27 @@ async function run() {
             res.send(result)
         })
 
+        // // Save Apply
+        // app.post('/apply', async (req, res) => {
+        //     const applyData = req.body
+        //     const result = await applyCollection.insertOne(applyData)
+        //     res.send(result)
+        // })
+
+
         // Save Apply
         app.post('/apply', async (req, res) => {
-            const applyData = req.body
-            const result = await applyCollection.insertOne(applyData)
-            res.send(result)
-        })
-
+            const applyData = req.body;
+            const jobId = applyData.jobId; // Assuming jobId is sent along with applyData
+            const result = await applyCollection.insertOne(applyData);
+        
+            // Update the job's applicant number in the alljob collection
+            const query = { _id: new ObjectId(jobId) };
+            const updateDoc = { $inc: { 'applicantsNumber': 1 } }; // Increment the applicantsNumber field by 1
+            await alljobCollection.updateOne(query, updateDoc);
+        
+            res.send(result);
+        });
 
         // Get allapply data from mongo
         app.get('/apply', async (req, res) => {

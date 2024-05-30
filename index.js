@@ -181,7 +181,7 @@ async function run() {
             // Send confirmation email
             transporter.sendMail(mailOptions, (error, info) => {
                 if (error) {
-                    return res.status(500).json({ error: 'Thank you for subscribing to JobNest\'s newsletter! For Some Issue Failed to send confirmation email. But don\'t worry we will solve it as soon as possible' });
+                    return res.status(500).json({ error: "Thank you for subscribing to JobNest's newsletter! We encountered an issue while sending the confirmation email. However, rest assured, you have been added to our community, and we will resolve this as soon as possible. We appreciate your patience." });
                 } else {
                     return res.status(200).json({ message: 'Subscription successful, confirmation email sent!' });
                 }

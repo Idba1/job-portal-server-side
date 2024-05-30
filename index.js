@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const nodemailer = require('nodemailer'); 
 require('dotenv').config()
 const port = process.env.PORT || 9000
 const app = express()
@@ -36,6 +37,7 @@ async function run() {
         const alljobCollection = client.db('jobnest').collection('alljob')
         const applyCollection = client.db('jobnest').collection('apply')
         const careerBlogCollection = client.db('jobnest').collection('blog')
+        const subscribersCollection = client.db('jobnest').collection('subscribers');
 
 
 
@@ -144,6 +146,47 @@ async function run() {
             const result = await careerBlogCollection.findOne(query)
             res.send(result)
         })
+
+
+        // Add new endpoint for subscribing to the newsletter
+        app.post('/subscribe', async (req, res) => {
+            const { email } = req.body;
+
+            // Check if the email is already subscribed
+            const existingSubscriber = await subscribersCollection.findOne({ email });
+            if (existingSubscriber) {
+                return res.status(400).json({ error: 'This email is already subscribed' });
+            }
+
+             // Add the new subscriber to the database
+             const result = await subscribersCollection.insertOne({ email });
+            
+             // Set up Nodemailer
+             const transporter = nodemailer.createTransport({
+                 service: 'gmail',
+                 auth: {
+                     user: process.env.EMAIL,
+                     pass: process.env.EMAIL_PASSWORD,
+                 },
+             });
+
+               // Mail options
+            const mailOptions = {
+                from: process.env.EMAIL,
+                to: email,
+                subject: 'Subscription Confirmation',
+                text: 'Thank you for subscribing to JobNest\'s newsletter! You will receive the latest updates on job listings, career advice, industry insights, and exclusive promotions directly to your inbox.',
+            };
+
+            // Send confirmation email
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    return res.status(500).json({ error: 'Failed to send confirmation email' });
+                } else {
+                    return res.status(200).json({ message: 'Subscription successful, confirmation email sent!' });
+                }
+            });
+        });
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
